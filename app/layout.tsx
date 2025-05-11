@@ -1,10 +1,11 @@
+import React from "react";
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
-
 import { siteConfig } from "@/config/site";
 import { almarai, notoSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
+import Web3Provider from "@/components/Web3Provider";
 
 export const metadata: Metadata = {
   title: {
@@ -34,17 +35,19 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background font-sans antialiased bg-[#F5F7FA]",
+          "min-h-screen font-sans antialiased bg-[#F5F7FA]",
           notoSans.variable,
           almarai.variable
         )}
       >
-        <div className="relative flex flex-col h-screen">
-          <main className="container mx-auto max-w-3xl px-6 flex-grow">
+        <Web3Provider>
+          <div className="relative flex flex-col h-screen">
             <Navbar />
-            {children}
-          </main>
-        </div>
+            <main className="container mx-auto max-w-3xl px-6 flex-grow">
+              {children}
+            </main>
+          </div>
+        </Web3Provider>
       </body>
     </html>
   );

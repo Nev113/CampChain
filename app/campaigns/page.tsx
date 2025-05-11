@@ -1,10 +1,26 @@
-import contohGmbr from "@/public/example-image.png";
-import Image from "next/image";
-import idrxLogo from "@/public/idrxLogo.png";
-import { Button } from "@heroui/button";
-import Footer from "@/components/footer";
+import CampaignCard from "@/components/CampaignCard";
 
 export default function CampaignsPage() {
+  // berikan aku contoh data kampanye aktual umum panjang
+  const campaigns = [
+    {
+      id: 1,
+      title: "Makan Untuk Anak Yatim",
+      organization: "Organisasi A",
+      isRunning: true,
+      currentAmount: 1000,
+      image: "/path/to/image1.jpg",
+    },
+    {
+      id: 2,
+      title: "Merenovasi Sekolah yang terlantar 4 tahun di desa",
+      organization: "Organisasi B",
+      isRunning: false,
+      currentAmount: 2000,
+      image: "/path/to/image2.jpg",
+    },
+    // Tambahkan lebih banyak kampanye sesuai kebutuhan
+  ];
   return (
     <div className="min-h-screen">
       <h1 className="text-2xl font-bold mt-10">Kampanye</h1>
@@ -33,37 +49,17 @@ export default function CampaignsPage() {
           </svg>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-2 w-full">
-        <div className="flex gap-5 w-full">
-          <div className="w-fit object-cover">
-            <Image src={contohGmbr} alt="Image Test" className="rounded-xl" />
-          </div>
-          <div className="flex flex-col w-full h-full flex-grow">
-            <h1 className="text-slate-700 text-lg font-bold font-notoSans">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Repudiandae, quia.
-            </h1>
-            <p className="text-md text-slate-500">Lembaga Lembaga</p>
-            <div className="mt-2 w-fit font-semibold flex flex-row items-center gap-1  text-green-800 text-[12px]">
-              <div className="size-[5px] rounded-full bg-green-800"></div>{" "}
-              Sedang Berlangsung
-            </div>
-            <div className="mt-2 px-3 py-1 bg-indigo-100 rounded-full flex flex-row items-center w-fit text-[14px] text-indigo-700 font-semibold">
-              <div className="size-[20px] flex items-center h-full">
-                <Image src={idrxLogo} alt="IDRX" />
-              </div>
-              12.098.987 IDRX
-            </div>
-            <div className="flex flex-row gap-2 mt-2">
-              <Button className="rounded-full bg-indigo-100 text-indigo-800 font-semibold font-lg w-fit hover:bg-indigo-800 hover:text-indigo-50">
-                Lihat Selengkapnya
-              </Button>
-              <Button className="rounded-full bg-rose-100 text-rose-800 font-semibold font-lg w-fit hover:bg-rose-800 hover:text-rose-50">
-                Donasi
-              </Button>
-            </div>
-          </div>
-        </div>
+      <div className="mt-5 flex flex-col gap-5 w-full">
+        {campaigns.map((campaign) => (
+          <CampaignCard
+            key={campaign.id}
+            title={campaign.title}
+            organization={campaign.organization}
+            isRunning={campaign.isRunning}
+            currentAmount={campaign.currentAmount}
+            image={campaign.image}
+          />
+        ))}
       </div>
     </div>
   );
