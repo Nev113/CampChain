@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  DONATION
+  REFUND
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  address   String
+  transactions Transaction[] @relation("UserTransactions")
+  receivedTransactions Transaction[] @relation("ToUser")
+  sentTransactions Transaction[] @relation("FromUser")
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  type      TransactionType
+  amount    Float?
+  date      DateTime
+  fromId    String
+  from      User?   @relation("FromUser", fields: [fromId], references: [id], map: "Transaction_fromId_fk")
+  toId      String?
+  to        User?   @relation("ToUser", fields: [toId], references: [id], map: "Transaction_toId_fkey")
+  user      User?   @relation("UserTransactions", fields: [fromId], references: [id])
+}
