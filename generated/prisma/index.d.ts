@@ -29,8 +29,7 @@ export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
  */
 export namespace $Enums {
   export const TransactionType: {
-  DEPOSIT: 'DEPOSIT',
-  WITHDRAWAL: 'WITHDRAWAL',
+  TRANSFER: 'TRANSFER',
   DONATION: 'DONATION',
   REFUND: 'REFUND'
 };
@@ -3449,14 +3448,14 @@ export namespace Prisma {
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    address?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    address?: StringFilter<"User"> | string
     transactions?: TransactionListRelationFilter
     receivedTransactions?: TransactionListRelationFilter
     sentTransactions?: TransactionListRelationFilter
-  }, "id">
+  }, "id" | "address">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder

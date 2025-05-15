@@ -9,14 +9,13 @@ import {
 import { Button } from "@heroui/button";
 import { useAccount, useBalance } from "wagmi";
 import { useRef, useState } from "react";
-import { input } from "@heroui/theme";
-import IDRXBalance from "./IDRXBalance";
 
 export default function TransferModal() {
   const { address } = useAccount();
   const [isCopy, setIsCopy] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const input1 = useRef<HTMLInputElement>(null);
+  const input2 = useRef<HTMLInputElement>(null);
   const { data: balance } = useBalance({
     address,
     token: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
@@ -37,6 +36,34 @@ export default function TransferModal() {
         type: "function",
       },
     ],
+  };
+
+  const handleTransfer = async () => {
+    if (input1.current) {
+      const amount = parseFloat(input1.current.value);
+      const toAddress = input2.current?.value;
+      if (!toAddress || !/^0x[a-fA-F0-9]{40}$/.test(toAddress)) {
+        alert("Invalid destination address");
+        return;
+      }
+      console.log(toAddress);
+      if (isNaN(amount) || amount <= 0) {
+        alert("Invalid amount");
+        return;
+      }
+      await fetch("/api/transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: toAddress,
+          from: address,
+          amount,
+          type: "TRANSFER",
+        }),
+      });
+    }
   };
 
   return (
@@ -100,13 +127,14 @@ export default function TransferModal() {
                   >
                     Max
                   </Button>
-                </div>
+                </div>{" "}
                 <h1 className="text-almarai text-slate-700 text-left">
                   Alamat Tujuan
                 </h1>
                 <input
                   type="text"
                   placeholder="0x..."
+                  ref={input2}
                   className="bg-indigo-100 border-none border-indigo-300 rounded-lg p-2 w-full text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-bold placeholder:text-indigo-500"
                 />
               </ModalBody>
@@ -116,9 +144,9 @@ export default function TransferModal() {
                 </Button>
                 <Button
                   color="primary"
-                  onPress={() => address}
+                  onPress={() => handleTransfer()}
                   disabled={isCopy}
-                  className="flex flex-row gap-2 items-center disabled:cursor-not-allowed"
+                  className="flex flex-row gap-2 items-center"
                 >
                   Konfirmasi
                 </Button>

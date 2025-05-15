@@ -1,14 +1,16 @@
 "use client";
 import { useConnectModal } from "@xellar/kit";
 import { useAccount } from "wagmi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
 import IDRXBalance from "./IDRXBalance";
 import LogoutButton from "./LogoutButton";
+import axios from "axios";
+
 export default function ConnectModal() {
   const { open: openConnectModal } = useConnectModal();
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const router = useRouter();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 

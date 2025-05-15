@@ -30,30 +30,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-async function POST(request: NextRequest) {
-  const { address } = await request.json();
-
-  if (address) {
-    return NextResponse.json(
-      { error: "Name and email are required" },
-      { status: 400 }
-    );
-  }
-
-  try {
-    const newUser = await prisma.user.create({
-      data: {
-        address,
-      },
-    });
-
-    return NextResponse.json(newUser, { status: 201 });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}

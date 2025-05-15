@@ -7,8 +7,7 @@ generator client {
 }
 
 enum TransactionType {
-  DEPOSIT
-  WITHDRAWAL
+  TRANSFER
   DONATION
   REFUND
 }
@@ -20,7 +19,7 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
-  address   String
+  address   String   @unique
   transactions Transaction[] @relation("UserTransactions")
   receivedTransactions Transaction[] @relation("ToUser")
   sentTransactions Transaction[] @relation("FromUser")
@@ -37,3 +36,4 @@ model Transaction {
   to        User?   @relation("ToUser", fields: [toId], references: [id], map: "Transaction_toId_fkey")
   user      User?   @relation("UserTransactions", fields: [fromId], references: [id])
 }
+

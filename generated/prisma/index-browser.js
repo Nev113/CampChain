@@ -149,8 +149,7 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.TransactionType = exports.$Enums.TransactionType = {
-  DEPOSIT: 'DEPOSIT',
-  WITHDRAWAL: 'WITHDRAWAL',
+  TRANSFER: 'TRANSFER',
   DONATION: 'DONATION',
   REFUND: 'REFUND'
 };
