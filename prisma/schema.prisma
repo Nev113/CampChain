@@ -31,6 +31,7 @@ model Transaction {
   amount    Float?
   date      DateTime
   fromId    String
+  txHash    String?   @unique
   from      User?   @relation("FromUser", fields: [fromId], references: [id], map: "Transaction_fromId_fk")
   toId      String?
   to        User?   @relation("ToUser", fields: [toId], references: [id], map: "Transaction_toId_fkey")

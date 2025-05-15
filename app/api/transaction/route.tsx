@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
         amount: amount,
         type: type as TransactionType,
         date: new Date(),
+        txHash,
         fromId: fromUser.id,
         toId: toUser.id,
       },

@@ -2139,6 +2139,7 @@ export namespace Prisma {
     amount: number | null
     date: Date | null
     fromId: string | null
+    txHash: string | null
     toId: string | null
   }
 
@@ -2148,6 +2149,7 @@ export namespace Prisma {
     amount: number | null
     date: Date | null
     fromId: string | null
+    txHash: string | null
     toId: string | null
   }
 
@@ -2157,6 +2159,7 @@ export namespace Prisma {
     amount: number
     date: number
     fromId: number
+    txHash: number
     toId: number
     _all: number
   }
@@ -2176,6 +2179,7 @@ export namespace Prisma {
     amount?: true
     date?: true
     fromId?: true
+    txHash?: true
     toId?: true
   }
 
@@ -2185,6 +2189,7 @@ export namespace Prisma {
     amount?: true
     date?: true
     fromId?: true
+    txHash?: true
     toId?: true
   }
 
@@ -2194,6 +2199,7 @@ export namespace Prisma {
     amount?: true
     date?: true
     fromId?: true
+    txHash?: true
     toId?: true
     _all?: true
   }
@@ -2290,6 +2296,7 @@ export namespace Prisma {
     amount: number | null
     date: Date
     fromId: string
+    txHash: string | null
     toId: string | null
     _count: TransactionCountAggregateOutputType | null
     _avg: TransactionAvgAggregateOutputType | null
@@ -2318,6 +2325,7 @@ export namespace Prisma {
     amount?: boolean
     date?: boolean
     fromId?: boolean
+    txHash?: boolean
     toId?: boolean
     from?: boolean | Transaction$fromArgs<ExtArgs>
     to?: boolean | Transaction$toArgs<ExtArgs>
@@ -2330,6 +2338,7 @@ export namespace Prisma {
     amount?: boolean
     date?: boolean
     fromId?: boolean
+    txHash?: boolean
     toId?: boolean
     from?: boolean | Transaction$fromArgs<ExtArgs>
     to?: boolean | Transaction$toArgs<ExtArgs>
@@ -2342,6 +2351,7 @@ export namespace Prisma {
     amount?: boolean
     date?: boolean
     fromId?: boolean
+    txHash?: boolean
     toId?: boolean
     from?: boolean | Transaction$fromArgs<ExtArgs>
     to?: boolean | Transaction$toArgs<ExtArgs>
@@ -2354,10 +2364,11 @@ export namespace Prisma {
     amount?: boolean
     date?: boolean
     fromId?: boolean
+    txHash?: boolean
     toId?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "amount" | "date" | "fromId" | "toId", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "amount" | "date" | "fromId" | "txHash" | "toId", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     from?: boolean | Transaction$fromArgs<ExtArgs>
     to?: boolean | Transaction$toArgs<ExtArgs>
@@ -2387,6 +2398,7 @@ export namespace Prisma {
       amount: number | null
       date: Date
       fromId: string
+      txHash: string | null
       toId: string | null
     }, ExtArgs["result"]["transaction"]>
     composites: {}
@@ -2819,6 +2831,7 @@ export namespace Prisma {
     readonly amount: FieldRef<"Transaction", 'Float'>
     readonly date: FieldRef<"Transaction", 'DateTime'>
     readonly fromId: FieldRef<"Transaction", 'String'>
+    readonly txHash: FieldRef<"Transaction", 'String'>
     readonly toId: FieldRef<"Transaction", 'String'>
   }
     
@@ -3319,6 +3332,7 @@ export namespace Prisma {
     amount: 'amount',
     date: 'date',
     fromId: 'fromId',
+    txHash: 'txHash',
     toId: 'toId'
   };
 
@@ -3482,6 +3496,7 @@ export namespace Prisma {
     amount?: FloatNullableFilter<"Transaction"> | number | null
     date?: DateTimeFilter<"Transaction"> | Date | string
     fromId?: StringFilter<"Transaction"> | string
+    txHash?: StringNullableFilter<"Transaction"> | string | null
     toId?: StringNullableFilter<"Transaction"> | string | null
     from?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     to?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -3494,6 +3509,7 @@ export namespace Prisma {
     amount?: SortOrderInput | SortOrder
     date?: SortOrder
     fromId?: SortOrder
+    txHash?: SortOrderInput | SortOrder
     toId?: SortOrderInput | SortOrder
     from?: UserOrderByWithRelationInput
     to?: UserOrderByWithRelationInput
@@ -3502,6 +3518,7 @@ export namespace Prisma {
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    txHash?: string
     AND?: TransactionWhereInput | TransactionWhereInput[]
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
@@ -3513,7 +3530,7 @@ export namespace Prisma {
     from?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     to?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-  }, "id">
+  }, "id" | "txHash">
 
   export type TransactionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -3521,6 +3538,7 @@ export namespace Prisma {
     amount?: SortOrderInput | SortOrder
     date?: SortOrder
     fromId?: SortOrder
+    txHash?: SortOrderInput | SortOrder
     toId?: SortOrderInput | SortOrder
     _count?: TransactionCountOrderByAggregateInput
     _avg?: TransactionAvgOrderByAggregateInput
@@ -3538,6 +3556,7 @@ export namespace Prisma {
     amount?: FloatNullableWithAggregatesFilter<"Transaction"> | number | null
     date?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     fromId?: StringWithAggregatesFilter<"Transaction"> | string
+    txHash?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     toId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
   }
 
@@ -3593,6 +3612,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     from?: UserCreateNestedOneWithoutSentTransactionsInput
     to?: UserCreateNestedOneWithoutReceivedTransactionsInput
     user?: UserCreateNestedOneWithoutTransactionsInput
@@ -3604,6 +3624,7 @@ export namespace Prisma {
     amount?: number | null
     date: Date | string
     fromId: string
+    txHash?: string | null
     toId?: string | null
   }
 
@@ -3612,6 +3633,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     from?: UserUpdateOneWithoutSentTransactionsNestedInput
     to?: UserUpdateOneWithoutReceivedTransactionsNestedInput
     user?: UserUpdateOneWithoutTransactionsNestedInput
@@ -3623,6 +3645,7 @@ export namespace Prisma {
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     fromId?: StringFieldUpdateOperationsInput | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     toId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -3632,6 +3655,7 @@ export namespace Prisma {
     amount?: number | null
     date: Date | string
     fromId: string
+    txHash?: string | null
     toId?: string | null
   }
 
@@ -3640,6 +3664,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionUncheckedUpdateManyInput = {
@@ -3648,6 +3673,7 @@ export namespace Prisma {
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     fromId?: StringFieldUpdateOperationsInput | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     toId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -3769,6 +3795,7 @@ export namespace Prisma {
     amount?: SortOrder
     date?: SortOrder
     fromId?: SortOrder
+    txHash?: SortOrder
     toId?: SortOrder
   }
 
@@ -3782,6 +3809,7 @@ export namespace Prisma {
     amount?: SortOrder
     date?: SortOrder
     fromId?: SortOrder
+    txHash?: SortOrder
     toId?: SortOrder
   }
 
@@ -3791,6 +3819,7 @@ export namespace Prisma {
     amount?: SortOrder
     date?: SortOrder
     fromId?: SortOrder
+    txHash?: SortOrder
     toId?: SortOrder
   }
 
@@ -4020,6 +4049,10 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type UserUpdateOneWithoutSentTransactionsNestedInput = {
     create?: XOR<UserCreateWithoutSentTransactionsInput, UserUncheckedCreateWithoutSentTransactionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSentTransactionsInput
@@ -4048,10 +4081,6 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -4212,6 +4241,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     from?: UserCreateNestedOneWithoutSentTransactionsInput
     to?: UserCreateNestedOneWithoutReceivedTransactionsInput
   }
@@ -4221,6 +4251,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     toId?: string | null
   }
 
@@ -4239,6 +4270,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     from?: UserCreateNestedOneWithoutSentTransactionsInput
     user?: UserCreateNestedOneWithoutTransactionsInput
   }
@@ -4249,6 +4281,7 @@ export namespace Prisma {
     amount?: number | null
     date: Date | string
     fromId: string
+    txHash?: string | null
   }
 
   export type TransactionCreateOrConnectWithoutToInput = {
@@ -4266,6 +4299,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     to?: UserCreateNestedOneWithoutReceivedTransactionsInput
     user?: UserCreateNestedOneWithoutTransactionsInput
   }
@@ -4275,6 +4309,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     toId?: string | null
   }
 
@@ -4313,6 +4348,7 @@ export namespace Prisma {
     amount?: FloatNullableFilter<"Transaction"> | number | null
     date?: DateTimeFilter<"Transaction"> | Date | string
     fromId?: StringFilter<"Transaction"> | string
+    txHash?: StringNullableFilter<"Transaction"> | string | null
     toId?: StringNullableFilter<"Transaction"> | string | null
   }
 
@@ -4485,6 +4521,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     toId?: string | null
   }
 
@@ -4494,6 +4531,7 @@ export namespace Prisma {
     amount?: number | null
     date: Date | string
     fromId: string
+    txHash?: string | null
   }
 
   export type TransactionCreateManyFromInput = {
@@ -4501,6 +4539,7 @@ export namespace Prisma {
     type: $Enums.TransactionType
     amount?: number | null
     date: Date | string
+    txHash?: string | null
     toId?: string | null
   }
 
@@ -4509,6 +4548,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     from?: UserUpdateOneWithoutSentTransactionsNestedInput
     to?: UserUpdateOneWithoutReceivedTransactionsNestedInput
   }
@@ -4518,6 +4558,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     toId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -4526,6 +4567,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     toId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -4534,6 +4576,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     from?: UserUpdateOneWithoutSentTransactionsNestedInput
     user?: UserUpdateOneWithoutTransactionsNestedInput
   }
@@ -4544,6 +4587,7 @@ export namespace Prisma {
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     fromId?: StringFieldUpdateOperationsInput | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionUncheckedUpdateManyWithoutToInput = {
@@ -4552,6 +4596,7 @@ export namespace Prisma {
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     fromId?: StringFieldUpdateOperationsInput | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionUpdateWithoutFromInput = {
@@ -4559,6 +4604,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     to?: UserUpdateOneWithoutReceivedTransactionsNestedInput
     user?: UserUpdateOneWithoutTransactionsNestedInput
   }
@@ -4568,6 +4614,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     toId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -4576,6 +4623,7 @@ export namespace Prisma {
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: NullableFloatFieldUpdateOperationsInput | number | null
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
     toId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 

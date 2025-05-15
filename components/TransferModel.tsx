@@ -7,8 +7,15 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
-import { useAccount, useBalance } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useSendTransaction,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
 import { useRef, useState } from "react";
+import { parseEther } from "viem";
 
 export default function TransferModal() {
   const { address } = useAccount();
@@ -21,49 +28,103 @@ export default function TransferModal() {
     token: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
     chainId: 4202,
   });
+  const { sendTransactionAsync, isPending: isNativeSending } =
+    useSendTransaction();
+  const [isTransactionComplete, setIsTransactionComplete] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
-  const idrxContract = {
+  const idrxABI = [
+    {
+      constant: false,
+      inputs: [
+        { name: "to", type: "address" },
+        { name: "amount", type: "uint256" },
+      ],
+      name: "transfer",
+      outputs: [{ name: "success", type: "bool" }],
+      type: "function",
+    },
+  ];
+
+  const idrxContract = useReadContract({
     address: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
-    abi: [
-      {
-        constant: false,
-        inputs: [
-          { name: "to", type: "address" },
-          { name: "amount", type: "uint256" },
-        ],
-        name: "transfer",
-        outputs: [{ name: "success", type: "bool" }],
-        type: "function",
-      },
-    ],
-  };
-
+    abi: idrxABI,
+  });
+  const { writeContractAsync: transferIDRX, isPending: isTokenSending } =
+    useWriteContract();
   const handleTransfer = async () => {
     if (input1.current) {
-      const amount = parseFloat(input1.current.value);
-      const toAddress = input2.current?.value;
-      if (!toAddress || !/^0x[a-fA-F0-9]{40}$/.test(toAddress)) {
-        alert("Invalid destination address");
-        return;
+      try {
+        setErrorMessage(null);
+        setIsTransactionComplete(false);
+
+        const amount = parseFloat(input1.current.value);
+        const toAddress = input2.current?.value;
+        if (!toAddress || !/^0x[a-fA-F0-9]{40}$/.test(toAddress)) {
+          setErrorMessage("Alamat tujuan tidak valid");
+          return;
+        }
+
+        if (isNaN(amount) || amount <= 0) {
+          setErrorMessage("Jumlah tidak valid");
+          return;
+        }
+        const balanceValue = parseFloat(balance?.formatted || "0");
+        if (amount > balanceValue) {
+          setErrorMessage("Saldo IDRX tidak cukup");
+          return;
+        }
+
+        const decimals = 2;
+        const multiplier = 10 ** decimals;
+        const amountInTokenUnits = BigInt(Math.floor(amount * multiplier));
+        const txHash = await transferIDRX({
+          address: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
+          abi: idrxABI,
+          functionName: "transfer",
+          args: [toAddress as `0x${string}`, amountInTokenUnits],
+        });
+
+        setTransactionHash(txHash);
+        console.log("IDRX Token transfer sent with hash:", txHash);
+
+        const response = await fetch("/api/transaction", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            to: toAddress,
+            from: address,
+            amount,
+            txHash: "https://sepolia-blockscout.lisk.com/tx/" + txHash,
+            type: "TRANSFER",
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to save transaction to database");
+        }
+        setIsTransactionComplete(true);
+        setIsCopy(true);
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          (error.message.includes("user rejected") ||
+            error.message.includes("rejected transaction") ||
+            error.message.includes("user denied") ||
+            error.message.includes("User rejected") ||
+            error.message.includes("User denied"))
+        ) {
+          setErrorMessage("Transaksi ditolak oleh pengguna");
+        } else {
+          console.error("Transaction error:", error);
+          setErrorMessage(
+            error instanceof Error ? error.message : "Transaction failed"
+          );
+        }
       }
-      console.log(toAddress);
-      if (isNaN(amount) || amount <= 0) {
-        alert("Invalid amount");
-        return;
-      }
-      await fetch("/api/transaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          to: toAddress,
-          from: address,
-          amount,
-          txHash: "",
-          type: "TRANSFER",
-        }),
-      });
     }
   };
 
@@ -126,9 +187,9 @@ export default function TransferModal() {
                     }}
                     className="bg-indigo-100 text-indigo-800 font-semibold px-4 py-2 rounded hover:bg-indigo-300"
                   >
-                    Max
+                    Max{" "}
                   </Button>
-                </div>{" "}
+                </div>
                 <h1 className="text-almarai text-slate-700 text-left">
                   Alamat Tujuan
                 </h1>
@@ -138,19 +199,59 @@ export default function TransferModal() {
                   ref={input2}
                   className="bg-indigo-100 border-none border-indigo-300 rounded-lg p-2 w-full text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-bold placeholder:text-indigo-500"
                 />
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={() => handleTransfer()}
-                  disabled={isCopy}
-                  className="flex flex-row gap-2 items-center"
-                >
-                  Konfirmasi
-                </Button>
+              </ModalBody>{" "}
+              <ModalFooter className="flex flex-col">
+                {errorMessage && (
+                  <div className="text-red-500 text-sm mb-2 w-full text-center">
+                    {errorMessage}
+                    {errorMessage === "Transaksi ditolak oleh pengguna" && (
+                      <div className="mt-2">
+                        <Button
+                          size="sm"
+                          color="primary"
+                          variant="flat"
+                          onPress={() => {
+                            setErrorMessage(null);
+                          }}
+                        >
+                          Coba Lagi
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {isTransactionComplete && (
+                  <div className="text-green-500 text-sm mb-2 w-full text-center">
+                    Transaksi berhasil dikirim!
+                    {transactionHash && (
+                      <div className="mt-1">
+                        <a
+                          href={`https://sepolia-blockscout.lisk.com/tx/${transactionHash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-600 hover:underline"
+                        >
+                          Lihat di Explorer
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className="flex justify-end w-full">
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={() => handleTransfer()}
+                    disabled={isCopy || isTokenSending}
+                    className="flex flex-row gap-2 items-center"
+                  >
+                    {isTokenSending
+                      ? "Processing Transfer..."
+                      : "Transfer IDRX"}
+                  </Button>
+                </div>
               </ModalFooter>
             </>
           )}
