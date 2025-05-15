@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { to, from, amount, type } = body;
+    const { to, from, amount, type, txHash } = body;
 
-    if (!to || !amount || !type || !from) {
+    if (!to || !amount || !type || !from || !txHash) {
       return NextResponse.json(
         { error: "ID, to, from, amount, and type are required" },
         { status: 400 }

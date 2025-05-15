@@ -60,6 +60,7 @@ export default function TransferModal() {
           to: toAddress,
           from: address,
           amount,
+          txHash: "",
           type: "TRANSFER",
         }),
       });
