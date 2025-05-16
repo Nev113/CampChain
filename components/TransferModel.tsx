@@ -14,8 +14,9 @@ import {
   useReadContract,
   useWriteContract,
 } from "wagmi";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { parseEther } from "viem";
+import { checkIDRXTransaction } from "@/utils/idrxTransaction";
 
 export default function TransferModal() {
   const { address } = useAccount();
@@ -33,7 +34,10 @@ export default function TransferModal() {
   const [isTransactionComplete, setIsTransactionComplete] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
-
+  const [transactionStatus, setTransactionStatus] = useState<
+    "pending" | "success" | "error" | null
+  >(null);
+  const [transactionDetails, setTransactionDetails] = useState<any>(null);
   const idrxABI = [
     {
       constant: false,
@@ -53,6 +57,38 @@ export default function TransferModal() {
   });
   const { writeContractAsync: transferIDRX, isPending: isTokenSending } =
     useWriteContract();
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (transactionHash && transactionStatus === "pending") {
+      interval = setInterval(async () => {
+        try {
+          const txDetails = await checkIDRXTransaction(transactionHash);
+          setTransactionDetails(txDetails);
+
+          if (txDetails.status === "ok") {
+            setTransactionStatus("success");
+            clearInterval(interval);
+          } else if (txDetails.status === "error") {
+            setTransactionStatus("error");
+            setErrorMessage(
+              "Transaksi gagal: " +
+                (txDetails.reason || "Alasan tidak diketahui")
+            );
+            clearInterval(interval);
+          }
+        } catch (error) {
+          console.log("Error checking transaction status:", error);
+        }
+      }, 5000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [transactionHash, transactionStatus]);
+
   const handleTransfer = async () => {
     if (input1.current) {
       try {
@@ -79,15 +115,53 @@ export default function TransferModal() {
         const decimals = 2;
         const multiplier = 10 ** decimals;
         const amountInTokenUnits = BigInt(Math.floor(amount * multiplier));
-        const txHash = await transferIDRX({
-          address: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
-          abi: idrxABI,
-          functionName: "transfer",
-          args: [toAddress as `0x${string}`, amountInTokenUnits],
-        });
 
+        const isContractAddress = false;
+
+        let txHash;
+        if (isContractAddress) {
+          console.log("Approving smart contract to spend tokens...");
+          const approvalHash = await transferIDRX({
+            address: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
+            abi: idrxABI,
+            functionName: "approve",
+            args: [toAddress as `0x${string}`, amountInTokenUnits],
+          });
+
+          console.log("Approval transaction sent with hash:", approvalHash);
+          txHash = approvalHash;
+        } else {
+          txHash = await transferIDRX({
+            address: "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661",
+            abi: idrxABI,
+            functionName: "transfer",
+            args: [toAddress as `0x${string}`, amountInTokenUnits],
+          });
+        }
         setTransactionHash(txHash);
         console.log("IDRX Token transfer sent with hash:", txHash);
+
+        setTransactionStatus("pending");
+
+        try {
+          const txDetails = await checkIDRXTransaction(txHash);
+          setTransactionDetails(txDetails);
+
+          if (txDetails.status === "ok") {
+            setTransactionStatus("success");
+          } else if (txDetails.status === "error") {
+            setTransactionStatus("error");
+            setErrorMessage(
+              "Transaksi gagal: " +
+                (txDetails.reason || "Alasan tidak diketahui")
+            );
+          }
+        } catch (checkError) {
+          console.log(
+            "Tidak bisa melakukan pengecekan transaksi saat ini. Transaksi mungkin masih dalam proses:",
+            checkError
+          );
+        }
 
         const response = await fetch("/api/transaction", {
           method: "POST",
@@ -219,10 +293,15 @@ export default function TransferModal() {
                       </div>
                     )}
                   </div>
-                )}
+                )}{" "}
                 {isTransactionComplete && (
                   <div className="text-green-500 text-sm mb-2 w-full text-center">
-                    Transaksi berhasil dikirim!
+                    {transactionStatus === "pending" &&
+                      "Transaksi sedang diproses..."}
+                    {transactionStatus === "success" && "Transaksi berhasil!"}
+                    {transactionStatus === null &&
+                      "Transaksi berhasil dikirim!"}
+
                     {transactionHash && (
                       <div className="mt-1">
                         <a

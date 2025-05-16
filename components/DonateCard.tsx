@@ -22,7 +22,7 @@ export default function DonateCard() {
           Donate
         </h1>
         <p className="text-slate-500 text-md -mt-1">
-          From : 0x983we8yudhsjiahd90q3 To:{" "}
+          From : 0x983we8yudhsjiahd90q3 To:
           <span className="font-semibold text-slate-800">
             Manusia Yang Baik
           </span>

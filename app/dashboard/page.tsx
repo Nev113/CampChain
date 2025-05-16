@@ -5,21 +5,19 @@ import DepositModal from "@/components/DepositModal";
 import TransferModal from "@/components/TransferModel";
 import Activity from "@/components/Activity";
 import { useAccount } from "wagmi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const router = useRouter();
 
-  // Gunakan useEffect untuk redirect jika tidak terkoneksi
   useEffect(() => {
     if (!isConnected) {
       router.push("/");
     }
   }, [isConnected, router]);
 
-  // Guard clause untuk tidak menampilkan UI jika tidak terkoneksi
   if (!isConnected) {
     return null;
   }
@@ -79,7 +77,7 @@ export default function DashboardPage() {
           <DepositModal />
           <TransferModal />
         </div>
-      </div>
+      </div>{" "}
       <div>
         <Activity />
       </div>
