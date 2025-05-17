@@ -3,16 +3,21 @@
 import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
+import { useState, useEffect } from "react";
 
 export default function LogoutButton() {
   const router = useRouter();
   const { disconnect } = useDisconnect();
-  // 0xe3df0dc69EAa17541843De5d03C3D1aD81593390
+  const [isDisconnected, setIsDisconnected] = useState(false);
 
   const handleLogout = async () => {
-    disconnect();
-    await router.push("/");
-    console.log("Logged out from Xellar Wallet");
+    try {
+      await disconnect();
+      await router.push("/");
+      console.log("Logged out from Xellar Wallet");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (

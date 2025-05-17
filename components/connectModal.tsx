@@ -1,37 +1,25 @@
 "use client";
-import { useConnectModal } from "@xellar/kit";
-import { useAccount } from "wagmi";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
+import { useConnectModal } from "@xellar/kit";
+import { useAccount } from "wagmi";
 import IDRXBalance from "./IDRXBalance";
 import LogoutButton from "./LogoutButton";
 
 export default function ConnectModal() {
   const router = useRouter();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [isXellarAvailable, setIsXellarAvailable] = useState(true);
+  const { isConnected } = useAccount();
+  const { open: openConnectModal } = useConnectModal();
 
-  let isConnected = false;
-  let address: string | undefined = undefined;
-  let openConnectModal = () => {};
+  const handleConnectClick = () => {
+    openConnectModal();
+  };
 
-  try {
-    const accountResult = useAccount();
-    const modalResult = useConnectModal();
-
-    isConnected = accountResult.isConnected;
-    address = accountResult.address;
-    openConnectModal = modalResult.open;
-  } catch (error) {
-    console.error("Error using Xellar hooks:", error);
-    setIsXellarAvailable(false);
-    localStorage.setItem("xellarFailed", "true");
-  }
-
-  if (!isXellarAvailable) {
-    return null;
-  }
+  const handleDisconnectClick = () => {
+    setDropdownVisible(false);
+  };
 
   return (
     <div className="relative flex flex-col gap-2">
@@ -53,7 +41,7 @@ export default function ConnectModal() {
             onPress={() => router.push("/dashboard")}
             className="rounded-full bg-indigo-100 text-indigo-800 font-semibold font-lg w-fit hover:bg-indigo-800 hover:text-indigo-50"
           >
-            {<IDRXBalance />}
+            {isConnected && <IDRXBalance />}
           </Button>
           {isDropdownVisible && (
             <div
@@ -67,7 +55,7 @@ export default function ConnectModal() {
         </div>
       ) : (
         <Button
-          onPress={() => openConnectModal()}
+          onPress={handleConnectClick}
           className="rounded-full bg-indigo-100 text-indigo-800 font-semibold font-lg w-fit hover:bg-indigo-800 hover:text-indigo-50"
         >
           Connect

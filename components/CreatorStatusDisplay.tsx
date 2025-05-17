@@ -23,12 +23,10 @@ export default function CreatorStatusDisplay() {
       }
 
       try {
-        // Check if the address is a creator
         const isCreatorResult = await isCreator(address);
         setIsCreatorAddress(isCreatorResult);
 
         if (isCreatorResult) {
-          // If isCreator is true, get the creator info
           const info = await getCreatorInfo(address);
           setCreatorInfo(info);
         }
@@ -79,12 +77,5 @@ export default function CreatorStatusDisplay() {
     );
   }
 
-  return (
-    <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mt-4">
-      <h3 className="font-semibold text-gray-800">Status Creator</h3>
-      <p className="text-gray-600 mt-1">
-        Anda belum terdaftar sebagai Creator. Hubungi admin untuk mendaftar.
-      </p>
-    </div>
-  );
+  return <div></div>;
 }

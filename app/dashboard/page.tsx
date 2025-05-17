@@ -55,7 +55,7 @@ export default function DashboardPage() {
     if (isConnected && address) {
       fetchOrCreateUser();
     }
-  }, [isConnected, address]); // Tampilkan null jika tidak terkoneksi
+  }, [isConnected, address]);
   if (!isConnected) {
     return null;
   }
@@ -75,15 +75,7 @@ export default function DashboardPage() {
           <TransferModal />
         </div>
       </div>
-
-      {/* Creator Status Display */}
-      <div className="my-8">
-        <h2 className="text-lg font-semibold text-slate-700 mb-2">
-          Status Creator
-        </h2>
-        <CreatorStatusDisplay />
-      </div>
-
+      <CreatorStatusDisplay />
       <div>
         <Activity />
       </div>

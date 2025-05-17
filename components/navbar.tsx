@@ -18,35 +18,8 @@ import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { siteConfig } from "@/config/site";
-import { useEffect, useState } from "react";
 
 export const Navbar = () => {
-  const [isXellarFailed, setIsXellarFailed] = useState(false);
-
-  // Check if we're in fallback mode by looking at localStorage
-  useEffect(() => {
-    const checkXellarStatus = () => {
-      try {
-        // Listen for messages from the Web3Provider about Xellar status
-        const xellarFailed = localStorage.getItem("xellarFailed") === "true";
-        setIsXellarFailed(xellarFailed);
-      } catch (error) {
-        console.error("Error checking Xellar status:", error);
-      }
-    };
-
-    // Initial check
-    checkXellarStatus();
-
-    // Listen for storage changes (in case other components update the status)
-    const handleStorageChange = () => checkXellarStatus();
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
   return (
     <HeroUINavbar
       maxWidth="xl"
@@ -87,7 +60,7 @@ export const Navbar = () => {
                   </NextLink>
                 </NavbarItem>
               ))}
-              {<ConnectModal />}
+              <ConnectModal />
             </ul>
           </NavbarContent>
         </NavbarContent>
