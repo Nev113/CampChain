@@ -7,8 +7,16 @@ generator client {
 }
 
 enum TransactionType {
+  TRANSFER
   DONATION
   REFUND
+}
+
+enum DonationStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
 }
 
 datasource db {
@@ -17,23 +25,67 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  address   String   @unique
-  transactions Transaction[] @relation("UserTransactions")
+  id                   String        @id @default(cuid())
+  address              String        @unique
+  role                 String?
+  transactions         Transaction[] @relation("UserTransactions")
   receivedTransactions Transaction[] @relation("ToUser")
-  sentTransactions Transaction[] @relation("FromUser")
+  sentTransactions     Transaction[] @relation("FromUser")
+  donations            Donation[]    @relation("UserDonations") 
+  createdCampaigns     Campaign[]    @relation("UserCreatedCampaigns")
 }
 
 model Transaction {
-  id        String   @id @default(cuid())
+  id        String          @id @default(cuid())
   type      TransactionType
   amount    Float?
   date      DateTime
   fromId    String
-  txHash    String?   @unique
-  from      User?   @relation("FromUser", fields: [fromId], references: [id], map: "Transaction_fromId_fk")
+  txHash    String?         @unique
+  from      User?           @relation("FromUser", fields: [fromId], references: [id], map: "Transaction_fromId_fk")
   toId      String?
-  to        User?   @relation("ToUser", fields: [toId], references: [id], map: "Transaction_toId_fkey")
-  user      User?   @relation("UserTransactions", fields: [fromId], references: [id])
+  to        User?           @relation("ToUser", fields: [toId], references: [id], map: "Transaction_toId_fkey")
+  user      User?           @relation("UserTransactions", fields: [fromId], references: [id])
 }
 
+model Campaign {
+  id             String      @id @default(cuid())
+  title          String
+  description    String      @db.Text
+  imageUrl       String
+  goal           Float
+  currentAmount  Float       @default(0)
+  isActive       Boolean     @default(true)
+  creatorAddress String
+  creator        User        @relation("UserCreatedCampaigns", fields: [creatorAddress], references: [address])
+  milestones     Milestone[]
+  donations      Donation[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  title       String
+  description String    @db.Text
+  amount      Float
+  completed   Boolean   @default(false)
+  order       Int
+  campaignId  String
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  completedAt DateTime?
+}
+
+model Donation {
+  id           String         @id @default(cuid())
+  amount       Float
+  donorId      String
+  donor        User           @relation("UserDonations", fields: [donorId], references: [id])
+  campaignId   String
+  campaign     Campaign       @relation(fields: [campaignId], references: [id])
+  txHash       String         @unique
+  refundTxHash String?
+  status       DonationStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}

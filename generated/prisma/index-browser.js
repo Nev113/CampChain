@@ -122,7 +122,8 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  address: 'address'
+  address: 'address',
+  role: 'role'
 };
 
 exports.Prisma.TransactionScalarFieldEnum = {
@@ -133,6 +134,42 @@ exports.Prisma.TransactionScalarFieldEnum = {
   fromId: 'fromId',
   txHash: 'txHash',
   toId: 'toId'
+};
+
+exports.Prisma.CampaignScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  goal: 'goal',
+  currentAmount: 'currentAmount',
+  isActive: 'isActive',
+  creatorAddress: 'creatorAddress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MilestoneScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  amount: 'amount',
+  completed: 'completed',
+  order: 'order',
+  campaignId: 'campaignId',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.DonationScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  donorId: 'donorId',
+  campaignId: 'campaignId',
+  txHash: 'txHash',
+  refundTxHash: 'refundTxHash',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -155,9 +192,19 @@ exports.TransactionType = exports.$Enums.TransactionType = {
   REFUND: 'REFUND'
 };
 
+exports.DonationStatus = exports.$Enums.DonationStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  REFUNDED: 'REFUNDED',
+  FAILED: 'FAILED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  Campaign: 'Campaign',
+  Milestone: 'Milestone',
+  Donation: 'Donation'
 };
 
 /**

@@ -4,6 +4,7 @@ import IDRXBalance from "@/components/IDRXBalance";
 import DepositModal from "@/components/DepositModal";
 import TransferModal from "@/components/TransferModel";
 import Activity from "@/components/Activity";
+import CreatorStatusDisplay from "@/components/CreatorStatusDisplay";
 import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,18 +12,11 @@ import { useRouter } from "next/navigation";
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const router = useRouter();
-
   useEffect(() => {
     if (!isConnected) {
       router.push("/");
     }
   }, [isConnected, router]);
-
-  if (!isConnected) {
-    return null;
-  }
-
-  const balance = IDRXBalance();
   useEffect(() => {
     async function fetchOrCreateUser() {
       try {
@@ -61,23 +55,35 @@ export default function DashboardPage() {
     if (isConnected && address) {
       fetchOrCreateUser();
     }
-  }, [isConnected, address]);
+  }, [isConnected, address]); // Tampilkan null jika tidak terkoneksi
+  if (!isConnected) {
+    return null;
+  }
   return (
     <div className="min-h-screen">
       <div className="flex flex-row justify-between items-center">
         <div>
           <h1 className="text-xl font-bold mt-10 text-slate-500">
             Selamat Datang, Donatur Baik!
-          </h1>
+          </h1>{" "}
           <div className="mt-3 text-slate-800 font-notoSans font-bold text-4xl">
-            {balance}
+            <IDRXBalance />
           </div>
         </div>
         <div className="flex flex-row gap-2 items-center mt-5">
           <DepositModal />
           <TransferModal />
         </div>
-      </div>{" "}
+      </div>
+
+      {/* Creator Status Display */}
+      <div className="my-8">
+        <h2 className="text-lg font-semibold text-slate-700 mb-2">
+          Status Creator
+        </h2>
+        <CreatorStatusDisplay />
+      </div>
+
       <div>
         <Activity />
       </div>

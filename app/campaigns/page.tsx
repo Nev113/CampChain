@@ -1,26 +1,45 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import CampaignCard from "@/components/CampaignCard";
 
+interface Campaign {
+  id: string;
+  title: string;
+  imageUrl: string;
+  currentAmount: number;
+  goal: number;
+  isActive: boolean;
+  creatorAddress: string;
+  creatorName?: string;
+}
+
 export default function CampaignsPage() {
-  // berikan aku contoh data kampanye aktual umum panjang
-  const campaigns = [
-    {
-      id: 1,
-      title: "Makan Untuk Anak Yatim",
-      organization: "Organisasi A",
-      isRunning: true,
-      currentAmount: 1000,
-      image: "/path/to/image1.jpg",
-    },
-    {
-      id: 2,
-      title: "Merenovasi Sekolah yang terlantar 4 tahun di desa",
-      organization: "Organisasi B",
-      isRunning: false,
-      currentAmount: 2000,
-      image: "/path/to/image2.jpg",
-    },
-    // Tambahkan lebih banyak kampanye sesuai kebutuhan
-  ];
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch("/api/campaigns");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch campaigns");
+        }
+
+        const data = await response.json();
+        setCampaigns(data.campaigns);
+      } catch (err: any) {
+        console.error("Error fetching campaigns:", err);
+        setError(err.message || "Failed to load campaigns");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
   return (
     <div className="min-h-screen">
       <h1 className="text-2xl font-bold mt-10">Kampanye</h1>
@@ -49,18 +68,48 @@ export default function CampaignsPage() {
           </svg>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-5 w-full">
-        {campaigns.map((campaign) => (
-          <CampaignCard
-            key={campaign.id}
-            title={campaign.title}
-            organization={campaign.organization}
-            isRunning={campaign.isRunning}
-            currentAmount={campaign.currentAmount}
-            image={campaign.image}
-          />
-        ))}
-      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        </div>
+      ) : error ? (
+        <div className="mt-6 p-4 bg-red-50 text-red-600 rounded-lg">
+          <p>{error}</p>
+          <button
+            className="mt-2 text-indigo-600 underline"
+            onClick={() => window.location.reload()}
+          >
+            Try again
+          </button>
+        </div>
+      ) : campaigns.length === 0 ? (
+        <div className="mt-10 text-center p-6 bg-gray-50 rounded-lg">
+          <h3 className="text-lg font-medium text-gray-700">
+            No campaigns found
+          </h3>
+          <p className="text-gray-500 mt-2">
+            Be the first to create a campaign!
+          </p>
+        </div>
+      ) : (
+        <div className="mt-5 flex flex-col gap-5 w-full">
+          {campaigns.map((campaign) => (
+            <CampaignCard
+              key={campaign.id}
+              title={campaign.title}
+              organization={
+                campaign.creatorName ||
+                campaign.creatorAddress.substring(0, 6) + "..."
+              }
+              isRunning={campaign.isActive}
+              currentAmount={campaign.currentAmount}
+              image={campaign.imageUrl}
+              id={campaign.id}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

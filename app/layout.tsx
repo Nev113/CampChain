@@ -40,6 +40,7 @@ export default function RootLayout({
           almarai.variable
         )}
       >
+        {/* Web3Provider handles wallet connections and fallback to limited functionality mode */}
         <Web3Provider>
           <div className="relative flex flex-col h-screen">
             <Navbar />

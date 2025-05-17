@@ -6,6 +6,7 @@ import { Button } from "@heroui/button";
 import logoCampChain from "@/public/CampaignChain.svg";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import Footer from "@/components/footer";
+import FeaturedCampaigns from "@/components/FeaturedCampaigns";
 
 export default function Home() {
   return (
@@ -62,11 +63,15 @@ export default function Home() {
           </p>
           <div className="relative w-full flex flex-col gap-2 justify-center items-center mt-5">
             <div className="w-full h-1 bg-gradient-to-l from-indigo-200 via-indigo-500 to-transparent"></div>
-            <Button className="absolute bg-slate-50 text-slate-800 font-semibold font-notoSans rounded-full px-5 py-2 hover:bg-slate-200 hover:text-slate-900 border-2 border-indigo-500 shadow-md shadow-indigo-300 hover:shadow-lg hover:shadow-indigo-400 hover:opacity-100 transition-all duration-300 ease-in-out">
-              Jelajahi Kampanye
-            </Button>
+            <a href="/campaigns" className="absolute top-[-20px]">
+              <Button className="bg-slate-50 text-slate-800 font-semibold font-notoSans rounded-full px-5 py-2 hover:bg-slate-200 hover:text-slate-900 border-2 border-indigo-500 shadow-md shadow-indigo-300 hover:shadow-lg hover:shadow-indigo-400 hover:opacity-100 transition-all duration-300 ease-in-out">
+                Jelajahi Kampanye
+              </Button>
+            </a>
           </div>
         </div>
+
+        <FeaturedCampaigns />
       </div>
       {/* -------------------------FITUR PAGE-------------------------- */}
       <div className="flex flex-col gap-0 justify-start mt-20">

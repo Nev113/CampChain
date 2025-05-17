@@ -1,18 +1,37 @@
 "use client";
 import { useConnectModal } from "@xellar/kit";
 import { useAccount } from "wagmi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
 import IDRXBalance from "./IDRXBalance";
 import LogoutButton from "./LogoutButton";
-import axios from "axios";
 
 export default function ConnectModal() {
-  const { open: openConnectModal } = useConnectModal();
-  const { isConnected, address } = useAccount();
   const router = useRouter();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [isXellarAvailable, setIsXellarAvailable] = useState(true);
+
+  let isConnected = false;
+  let address: string | undefined = undefined;
+  let openConnectModal = () => {};
+
+  try {
+    const accountResult = useAccount();
+    const modalResult = useConnectModal();
+
+    isConnected = accountResult.isConnected;
+    address = accountResult.address;
+    openConnectModal = modalResult.open;
+  } catch (error) {
+    console.error("Error using Xellar hooks:", error);
+    setIsXellarAvailable(false);
+    localStorage.setItem("xellarFailed", "true");
+  }
+
+  if (!isXellarAvailable) {
+    return null;
+  }
 
   return (
     <div className="relative flex flex-col gap-2">
